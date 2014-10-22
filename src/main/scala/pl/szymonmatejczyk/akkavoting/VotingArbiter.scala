@@ -32,6 +32,7 @@ class VotingArbiter extends Actor {
     case StartVoting =>
       import context.dispatcher
       if (players.size >= minPlayers) {
+        info("Starting new voting")
         players.foreach(
           p => p.ref ! VotingStart(roundTimeSec)
         )
@@ -59,15 +60,19 @@ class VotingArbiter extends Actor {
     case WannaPlay(name: String) =>
       info(s"Welcoming $name")
       players = players + Player(sender(), name)
+    case GetPeers =>
+      sender ! Peers(players.map(_.ref))
   }
 
 
   def divideMoney(votes: Map[Player, Int], money: Int): Map[Player, Int] = {
-    val votesGrouped = votes.groupBy(_._2).mapValues(_.size)
-    val maxVotes: Int = votesGrouped.maxBy(_._2)._2
-    val optionsChosen = votesGrouped.filter(_._2 == maxVotes).map(_._1).toSet
-    val winners = votes.filter(x => optionsChosen.contains(x._2)).map(_._1)
-    Map() ++ winners.map(winner => winner -> money / winners.size)
+    if (votes.size > 0) {
+      val votesGrouped = votes.groupBy(_._2).mapValues(_.size)
+      val maxVotes: Int = votesGrouped.maxBy(_._2)._2
+      val optionsChosen = votesGrouped.filter(_._2 == maxVotes).map(_._1).toSet
+      val winners = votes.filter(x => optionsChosen.contains(x._2)).map(_._1)
+      Map() ++ winners.map(winner => winner -> money / winners.size)
+    } else Map()
   }
 
   def addGains(roundGains: Map[Player, Int]) {

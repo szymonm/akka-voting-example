@@ -17,4 +17,4 @@ case object FinishVoting extends Voting
 trait PeerLookup
 
 case object GetPeers extends PeerLookup
-case class Peers(peers: List[ActorRef]) extends PeerLookup
+case class Peers(peers: Set[ActorRef]) extends PeerLookup

@@ -12,7 +12,7 @@ object VotingApp {
     if (args.isEmpty || args.head == "Arbiter")
       startArbiter()
     if (!args.isEmpty && args.head != "Arbiter")
-      startPlayer(args.head)
+      startPlayer(args)
   }
 
   def startArbiter() {
@@ -25,12 +25,15 @@ object VotingApp {
     system.scheduler.scheduleOnce(1.second, arbiter, StartVoting)
   }
 
-  def startPlayer(name: String) {
+  def startPlayer(names: Seq[String]) {
     val system =
       ActorSystem("VotingPlayer", ConfigFactory.load("player"))
     val remotePath =
       "akka.tcp://VotingArbiter@127.0.0.1:2552/user/arbiter"
-    system.actorOf(Props(classOf[VotingPlayer], name, remotePath), name)
+    names.foreach {
+      name =>
+        system.actorOf(Props(classOf[VotingPlayer], name, remotePath), name)
+    }
   }
 
 }
