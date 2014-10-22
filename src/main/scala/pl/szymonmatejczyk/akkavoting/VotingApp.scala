@@ -25,11 +25,12 @@ object VotingApp {
     system.scheduler.scheduleOnce(1.second, arbiter, StartVoting)
   }
 
+  val arbiterSystemIp = "127.0.0.1"
   def startPlayer(names: Seq[String]) {
     val system =
       ActorSystem("VotingPlayer", ConfigFactory.load("player"))
     val remotePath =
-      "akka.tcp://VotingArbiter@127.0.0.1:2552/user/arbiter"
+      s"akka.tcp://VotingArbiter@$arbiterSystemIp:2552/user/arbiter"
     names.foreach {
       name =>
         system.actorOf(Props(classOf[VotingPlayer], name, remotePath), name)
