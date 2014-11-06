@@ -9,10 +9,13 @@ import scala.concurrent.duration._
  */
 object VotingApp {
   def main(args: Array[String]): Unit = {
-    if (args.isEmpty || args.head == "Arbiter")
+    if (!args.isEmpty && args.head == "Arbiter")
       startArbiter()
-    if (!args.isEmpty && args.head != "Arbiter")
-      startPlayer(args)
+    else {
+      val conf = ConfigFactory.load("player")
+      val names = Seq(conf.getString("akka.player.name"))
+      startPlayer(names)
+    }
   }
 
   def startArbiter() {
