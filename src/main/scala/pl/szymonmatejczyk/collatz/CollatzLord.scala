@@ -28,8 +28,8 @@ class CollatzLord extends Actor with ActorLogging {
   }
 
   def addResult(n: BigInt, steps: BigInt): Unit = {
-    if (n.intValue() % 10000 == 0) {
-      log.info(s"$n reached (result: $steps) - (${knownPeasants.size} peasants known")
+    if (n.intValue() % 1000 == 0) {
+      log.info(s"$n reached (result: $steps) - (${knownPeasants.size} peasants known)")
     }
   }
 }

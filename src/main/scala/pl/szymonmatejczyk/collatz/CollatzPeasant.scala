@@ -20,6 +20,7 @@ class CollatzPeasant extends Actor with ActorLogging {
       context.actorSelection(arbiterPath) ! IamHereToServeYouLord
     case Compute(n: BigInt) =>
       sender ! Result(n, computeCollatzLength(n))
+      log.info("working hard...")
       sender ! IamHereToServeYouLord
   }
 }
